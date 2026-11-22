@@ -11,6 +11,7 @@ def explore():
     try:
         conn.execute((ROOT / "seed.cypher").read_text()).consume()
         rows = list(conn.execute((ROOT / "queries/dependency-paths.cypher").read_text()).data())
+        edges = list(conn.execute((ROOT / "queries/dependency-edges.cypher").read_text()).data())
     finally:
         conn.close()
     by_component = {}
@@ -25,7 +26,7 @@ def explore():
                                "failed" if "fail" in verdicts else
                                "pass recorded" if verdicts == {"pass"} else "missing or unknown")
     return {"engine": "relate-db", "version": version("relate-db"), "rows": rows,
-            "components": by_component, "scope": "Synthetic data; no authenticated evidence"}
+            "components": by_component, "edges": edges, "scope": "Synthetic data; no authenticated evidence"}
 
 if __name__ == "__main__":
     print(json.dumps(explore(), indent=2))
