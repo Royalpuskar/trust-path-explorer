@@ -58,10 +58,24 @@ def render_graph(report):
     return "".join(parts) + "</svg>"
 
 
+def compare_direct(report):
+    """Compare direct-only coverage with the bounded multi-hop query output."""
+    root = report["root"]
+    direct = sorted({edge["target"] for edge in report["edges"]
+                     if edge["source"] == root and edge["target"] != root})
+    additional = sorted(set(report["components"]) - set(direct) - {root})
+    return {"direct": direct, "additional": additional,
+            "additional_review": [name for name in additional
+                                  if report["components"][name]["status"] != "pass recorded"]}
+
+
 def render(report):
     def e(value):
         return escape(str(value), quote=True)
     components = report["components"]
+    comparison = compare_direct(report)
+    additional = ", ".join(e(name) for name in comparison["additional"]) or "None"
+    flagged = ", ".join(e(name) for name in comparison["additional_review"]) or "None"
     badges = {"conflicting":"conflict", "failed":"conflict",
               "missing or unknown":"missing", "pass recorded":"pass"}
     cards = []
@@ -101,7 +115,7 @@ td,th{border-bottom:1px solid #dbe3dc;text-align:left;padding:10px}th{background
 <p>Engine: <strong>{e(report["engine"])} {e(report["version"])}</strong> · {len(components)} dependencies · {len(report["rows"])} evidence rows</p>
 <section><h2>Dependency map</h2><p>Arrows indicate declared dependencies; nodes are grouped by minimum queried depth. Scroll the map horizontally if needed.</p><div class="graph-wrap" tabindex="0" aria-label="Scrollable dependency map">{render_graph(report)}</div><h3>Dependency links (text alternative)</h3><ul>{edges}</ul></section><div class="grid">
 <section><h2>Evidence by component</h2>{''.join(cards)}</section></div>
-<section><h2>Raw query results</h2><div class="table-wrap"><table><thead><tr><th>Component</th><th>Depth</th><th>Evidence</th><th>Verdict</th></tr></thead><tbody>{rows}</tbody></table></div></section>
+<section><h2>Direct-only baseline versus bounded traversal</h2><p>A direct-only inventory from queried root edges contains {len(comparison["direct"])} distinct dependencies. The traversal found {len(comparison["additional"])} additional components: {additional}.</p><p>Additional components with missing, conflicting or failed evidence: <strong>{flagged}</strong>.</p><p>This comparison uses the supplied synthetic graph and the query depth limit; it is not an exhaustive supply-chain assessment.</p></section><section><h2>Raw query results</h2><div class="table-wrap"><table><thead><tr><th>Component</th><th>Depth</th><th>Evidence</th><th>Verdict</th></tr></thead><tbody>{rows}</tbody></table></div></section>
 <footer>Generated from local Relate queries. No external assets, requests or scripts. Expand or collapse evidence records with the keyboard or pointer.</footer>
 </main></body></html>"""
 

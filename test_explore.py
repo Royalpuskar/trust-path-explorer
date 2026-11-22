@@ -1,7 +1,7 @@
 import unittest
 from xml.etree import ElementTree as ET
 from explore import explore
-from report_html import render, render_graph
+from report_html import render, render_graph, compare_direct
 
 class GraphFixture(unittest.TestCase):
     def test_dependency_graph_and_conflicting_evidence(self):
@@ -50,6 +50,16 @@ class GraphFixture(unittest.TestCase):
         parsed = ET.fromstring(render_graph(report))
         self.assertIn(injected, [g.attrib["data-component"] for g in parsed.findall("s:g",ns)])
         self.assertFalse(parsed.findall(".//s:script",ns))
+
+    def test_direct_baseline_misses_indirect_conflict(self):
+        report = explore()
+        self.assertEqual(compare_direct(report), {
+            "direct": ["parser", "utility"],
+            "additional": ["codec"],
+            "additional_review": ["codec"]})
+        html = render(report)
+        self.assertIn("1 additional components: codec", html)
+        self.assertIn("Additional components with missing, conflicting or failed evidence: <strong>codec</strong>", html)
 
 if __name__ == "__main__":
     unittest.main()

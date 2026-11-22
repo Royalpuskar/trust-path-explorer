@@ -17,6 +17,10 @@ Use Python 3.9+ and a virtual environment. Install `python -m pip install -r req
 
 After installing the pinned requirements, run `python report_html.py > trust-report.html` and open the generated file in a browser. The report is generated on demand from two real queries: evidence traversal and dependency edges. A script-free layered SVG renders the queried dependency edges and minimum depths with explicit status labels. Its adjacent textual edge list and keyboard-accessible evidence panels expose the same information without requiring visual interpretation. A raw result table preserves all evidence rows. No remote resources, JavaScript or live target data. The preceding report revision passed both integration tests ([CI logs](https://github.com/Royalpuskar/trust-path-explorer/actions/runs/45005350966/job/137155631628)). A new SVG regression test checks edge parity, status labels and XML escaping. The new revision requires fresh CI and visual validation.
 
+## Why graph traversal matters
+
+A direct-only inventory derived from the queried root edges contains parser and utility. The bounded traversal additionally finds codec, whose pass and fail evidence conflicts. The HTML report now makes this difference explicit. This is a synthetic fixture comparison, not a claim of exhaustive real-world detection. The additional baseline test requires fresh CI.
+
 ## Implementation milestones
 - [x] Confirm official Relate installation/API and pin its version.
 - [x] Implement actual Relate graph ingestion and queries, with reproducible seed dataset.
