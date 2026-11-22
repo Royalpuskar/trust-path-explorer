@@ -1,0 +1,15 @@
+name: Relate integration
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - run: python3 -m venv .venv
+      - run: .venv/bin/python -m pip install --only-binary=:all: -r requirements.txt
+      - run: .venv/bin/python -m unittest -v test_explore
+      - run: .venv/bin/python explore.py
