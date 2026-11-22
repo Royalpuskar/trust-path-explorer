@@ -15,7 +15,7 @@ Use Python 3.9+ and a virtual environment. Install `python -m pip install -r req
 
 ## Generate the local demonstration
 
-After installing the pinned requirements, run `python report_html.py > trust-report.html` and open the generated file in a browser. The report is generated on demand from two real queries: evidence traversal and dependency edges. Keyboard-accessible disclosure panels and a raw result table reveal contradictory evidence and missing records. No remote resources, JavaScript or live target data. Browser visual validation and current-head integration tests remain pending until executed.
+After installing the pinned requirements, run `python report_html.py > trust-report.html` and open the generated file in a browser. The report is generated on demand from two real queries: evidence traversal and dependency edges. A script-free layered SVG renders the queried dependency edges and minimum depths with explicit status labels. Its adjacent textual edge list and keyboard-accessible evidence panels expose the same information without requiring visual interpretation. A raw result table preserves all evidence rows. No remote resources, JavaScript or live target data. The preceding report revision passed both integration tests ([CI logs](https://github.com/Royalpuskar/trust-path-explorer/actions/runs/45005350966/job/137155631628)). A new SVG regression test checks edge parity, status labels and XML escaping. The new revision requires fresh CI and visual validation.
 
 ## Implementation milestones
 - [x] Confirm official Relate installation/API and pin its version.
@@ -26,6 +26,6 @@ After installing the pinned requirements, run `python report_html.py > trust-rep
 - [ ] Add setup, tests, license, demo and AI-use statement.
 - [ ] Add required GitHub topic `relate` through repository settings.
 
-Status: previous database-backed revision executed successfully; HTML report implementation and new integration test added. Fresh CI, browser visual validation and deployment remain pending. AI-assisted planning; significant AI use must be disclosed in submission. No contest registration or submission claimed.
+Status: database-backed HTML report passed two prior integration tests; layered graph visualization and a third integration test added. Fresh CI, browser visual validation and deployment remain pending. AI-assisted planning; significant AI use must be disclosed in submission. No contest registration or submission claimed.
 
 Copyright 2026 Royalpuskar.
