@@ -21,15 +21,19 @@ After installing the pinned requirements, run `python report_html.py > trust-rep
 
 A direct-only inventory derived from the queried root edges contains parser and utility. The bounded traversal additionally finds codec, whose pass and fail evidence conflicts. The HTML report now makes this difference explicit. This is a synthetic fixture comparison, not a claim of exhaustive real-world detection. The additional baseline test requires fresh CI.
 
+## Alternate graph fixture
+
+The second synthetic graph (`fixtures/alternate.cypher`) adds a cycle, two distinct paths to codec and a disconnected component pair. It preserves every raw query row but deduplicates identical evidence ID/verdict pairs in summaries, so repeated paths do not multiply the same evidence. Conflicting verdicts stay visible. Run `python -c "from explore import explore; from report_html import render; print(render(explore('alternate')))" > alternate-report.html` to generate its report. The new integration test verifies minimum depth, repeated-path evidence, conflicts and unreachable components against the installed Relate engine; fresh CI is required.
+
 ## Implementation milestones
 - [x] Confirm official Relate installation/API and pin its version.
 - [x] Implement actual Relate graph ingestion and queries, with reproducible seed dataset.
-- [ ] Compare graph findings against a flat baseline on a fixed fixture.
+- [x] Compare graph findings against a flat baseline on a fixed fixture (CI at 7285f5f).
 - [ ] Build a distinct graph exploration interface with accessible text alternatives.
 - [ ] Validate disconnected paths, cycles, conflicting assertions and missing evidence.
 - [ ] Add setup, tests, license, demo and AI-use statement.
 - [ ] Add required GitHub topic `relate` through repository settings.
 
-Status: database-backed HTML report passed two prior integration tests; layered graph visualization and a third integration test added. Fresh CI, browser visual validation and deployment remain pending. AI-assisted planning; significant AI use must be disclosed in submission. No contest registration or submission claimed.
+Status: four integration tests passed at revision `7285f5f` ([CI](https://github.com/Royalpuskar/trust-path-explorer/actions/runs/45022899521)); alternate fixture and a fifth integration test added. Fresh CI, browser visual validation and deployment remain pending. AI-assisted planning; significant AI use must be disclosed in submission. No contest registration or submission claimed.
 
 Copyright 2026 Royalpuskar.

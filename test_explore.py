@@ -61,5 +61,25 @@ class GraphFixture(unittest.TestCase):
         self.assertIn("1 additional components: codec", html)
         self.assertIn("Additional components with missing, conflicting or failed evidence: <strong>codec</strong>", html)
 
+    def test_alternate_fixture_deduplicates_evidence_and_excludes_unreachable_nodes(self):
+        report = explore("alternate")
+        self.assertEqual(set(report["components"]), {"parser", "utility", "codec"})
+        self.assertEqual(report["components"]["parser"]["depth"], 1)
+        self.assertEqual(report["components"]["codec"]["depth"], 2)
+        self.assertEqual(report["components"]["codec"]["status"], "conflicting")
+        self.assertEqual(report["components"]["codec"]["evidence"], [
+            {"id":"review-codec","verdict":"fail"},
+            {"id":"test-codec","verdict":"pass"}])
+        self.assertEqual(report["components"]["parser"]["evidence"], [
+            {"id":"test-parser","verdict":"pass"}])
+        self.assertGreaterEqual(sum(r["component"] == "codec" and r["evidence"] == "test-codec"
+                                    for r in report["rows"]), 2)
+        self.assertIn({"source":"codec","target":"parser"}, report["edges"])
+        self.assertIn({"source":"isolated","target":"isolated-child"}, report["edges"])
+        self.assertNotIn("unrelated-failure", {r["evidence"] for r in report["rows"]})
+        self.assertEqual(compare_direct(report)["additional_review"], ["codec"])
+        with self.assertRaises(ValueError):
+            explore("unknown")
+
 if __name__ == "__main__":
     unittest.main()
